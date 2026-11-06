@@ -13,6 +13,7 @@ from .lptn import simulate
 WINDING_LIMIT_C = 130.0   # insulation class B hot-spot proxy (assumption)
 MAGNET_LIMIT_C = 100.0    # assumed demagnetisation-safe magnet limit (grade dependent)
 COOLANT_C = 40.0
+COOLANT_GRID_C = (25.0, 40.0, 65.0, 90.0)  # inside the bench's measured coolant range
 AMBIENT_C = 25.0
 
 
@@ -43,11 +44,11 @@ DUTY_CYCLES = {
 }
 
 
-def margin_for(theta, name, i_peak, duration_s=3600):
+def margin_for(theta, name, i_peak, duration_s=3600, coolant_C=COOLANT_C):
     t, i, n = duty_cycle(name, i_peak, duration_s)
-    tc = np.full_like(t, COOLANT_C, dtype=float)
+    tc = np.full_like(t, coolant_C, dtype=float)
     ta = np.full_like(t, AMBIENT_C, dtype=float)
-    T, _ = simulate(theta, i, n, tc, ta, np.full(4, COOLANT_C), 1.0)
+    T, _ = simulate(theta, i, n, tc, ta, np.full(4, coolant_C), 1.0)
     pk_sw, pk_pm = T[:, 1].max(), T[:, 0].max()
 
     def first_cross(series, limit):
@@ -55,7 +56,7 @@ def margin_for(theta, name, i_peak, duration_s=3600):
         return float(t[idx[0]]) if len(idx) else None
 
     return {
-        "duty_cycle": name, "i_peak_A": float(i_peak),
+        "duty_cycle": name, "i_peak_A": float(i_peak), "coolant_C": float(coolant_C),
         "peak_winding_C": float(pk_sw), "peak_magnet_C": float(pk_pm),
         "winding_margin_K": float(WINDING_LIMIT_C - pk_sw),
         "magnet_margin_K": float(MAGNET_LIMIT_C - pk_pm),

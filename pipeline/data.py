@@ -22,6 +22,8 @@ BASE_INPUTS = ["u_d", "u_q", "i_d", "i_q", "motor_speed", "coolant", "ambient"]
 def load(path: str) -> pd.DataFrame:
     df = pd.read_csv(path)
     df["profile_id"] = df["profile_id"].astype(int)
+    # group rows by profile (stable, so time order inside each profile is kept)
+    df = df.sort_values("profile_id", kind="stable").reset_index(drop=True)
     return add_derived(df)
 
 
@@ -41,11 +43,12 @@ def feature_columns() -> list[str]:
     cols = list(inputs)
     for span in EWMA_SPANS:
         cols += [f"{c}_ewma{span}" for c in inputs]
+        cols += [f"{c}_ewms{span}" for c in inputs]
     return cols
 
 
 def add_ewma(df: pd.DataFrame) -> pd.DataFrame:
-    """Exponentially weighted moving averages per profile (causal, so usable online)."""
+    """Exponentially weighted moving averages and std devs per profile (causal, usable online)."""
     inputs = BASE_INPUTS + ["i_s", "u_s", "p_el", "i_s_x_n", "u_s_x_i_s"]
     out = [df]
     g = df.groupby("profile_id", sort=False)[inputs]
@@ -53,6 +56,9 @@ def add_ewma(df: pd.DataFrame) -> pd.DataFrame:
         e = g.transform(lambda s, sp=span: s.ewm(span=sp, adjust=True).mean())
         e.columns = [f"{c}_ewma{span}" for c in inputs]
         out.append(e)
+        sd = g.transform(lambda s, sp=span: s.ewm(span=sp, adjust=True).std().fillna(0.0))
+        sd.columns = [f"{c}_ewms{span}" for c in inputs]
+        out.append(sd)
     return pd.concat(out, axis=1)
 
 

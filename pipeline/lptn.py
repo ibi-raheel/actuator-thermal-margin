@@ -24,7 +24,13 @@ PARAM_NAMES = [
     "k_st1", "k_st2", "k_sy1", "k_sy2",        # W/krpm, W/krpm^2 iron losses (tooth, yoke)
     "k_pm1", "k_pm2",                          # W/krpm^2, W/(A^2 krpm) rotor losses
     "k_st3",                                   # W/(A^2 krpm) current-driven tooth eddy losses
+    "G_pm_c1",                                 # W/(K krpm), speed-dependent rotor/shaft convection
 ]
+
+# Temperatures are invariant to scaling every C, G and loss coefficient by the same factor,
+# so the watt scale is not identifiable from temperatures alone. R0 is pinned to an assumed
+# phase resistance to remove that flat direction; it sets the watt scale only.
+R0_PINNED = 0.015
 
 # Initial guess, physically plausible for a ~50 kW water-cooled PMSM.
 THETA0 = np.array([
@@ -36,6 +42,7 @@ THETA0 = np.array([
     10.0, 5.0, 10.0, 5.0,
     2.0, 1e-4,
     1e-4,
+    1.0,
 ])
 
 
@@ -72,7 +79,7 @@ def simulate(theta, i_s, n_krpm, t_cool, t_amb, t0, dt):
             A[i, j] -= g
             A[j, i] -= g
         # boundaries: yoke->coolant, end winding->coolant, rotor->coolant(housing)
-        gb = np.array([theta[10], theta[7], 0.0, theta[4]])
+        gb = np.array([theta[10] + theta[19] * abs(n_krpm[k]), theta[7], 0.0, theta[4]])
         rhs = C / dt * T + P + gb * t_cool[k]
         for i in range(4):
             A[i, i] += C[i] / dt + gb[i]
@@ -94,7 +101,7 @@ def steady_state(theta, i_s, n_krpm, t_cool, iters=50):
         A = np.zeros((4, 4))
         for (i, j, g) in ((0, 2, g_air), (1, 2, theta[6]), (2, 3, theta[5])):
             A[i, i] += g; A[j, j] += g; A[i, j] -= g; A[j, i] -= g
-        gb = np.array([theta[10], theta[7], 0.0, theta[4]])
+        gb = np.array([theta[10] + theta[19] * abs(n_krpm), theta[7], 0.0, theta[4]])
         A += np.diag(gb)
         T = np.linalg.solve(A, P + gb * t_cool)
     return T

@@ -121,3 +121,15 @@ def test_duty_cycle_margin_monotone_in_current():
     a = sc.margin_for(THETA0, "continuous_carry", 50.0, 600)
     b = sc.margin_for(THETA0, "continuous_carry", 150.0, 600)
     assert b["peak_winding_C"] > a["peak_winding_C"]
+
+
+def test_profile_arrays_follow_row_order_after_sort(tmp_path):
+    """Predictions are stacked per profile; the frame must already be grouped the same way."""
+    from pipeline.data import load
+    from pipeline.fit_lptn import profile_arrays
+    df = toy_frame(5, pids=(60, 2, 60))  # profile 60 split around 2, as in an unsorted file
+    df.loc[df.profile_id == 2, "stator_winding"] = 99.0
+    p = tmp_path / "m.csv"; df.to_csv(p, index=False)
+    loaded = load(str(p))
+    stacked = np.concatenate([y[:, 1] for _, _, _, _, _, y in profile_arrays(loaded)])
+    assert np.allclose(stacked, loaded["stator_winding"].to_numpy())

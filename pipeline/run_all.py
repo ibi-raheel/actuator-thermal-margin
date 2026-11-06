@@ -102,7 +102,7 @@ def main(csv_path: str, refit: bool = False):
     df = add_ewma(df)
     cols = feature_columns()
     X = df[cols].to_numpy(np.float32); Y = df[TARGETS].to_numpy()
-    alphas = [0.1, 1, 10, 100, 1000]
+    alphas = [1, 10, 100, 1000, 1e4, 1e5]
     val_scores = {}
     for a in alphas:
         m = fit_ridge(X[tr], Y[tr], a)
@@ -182,16 +182,18 @@ def main(csv_path: str, refit: bool = False):
     log("duty cycles")
     duty = []
     for name in sc.DUTY_CYCLES:
-        for ip in range(50, 301, 25):
-            duty.append(sc.margin_for(theta, name, float(ip)))
+        for tc in sc.COOLANT_GRID_C:
+            for ip in range(50, 301, 25):   # bench data covers i_s up to ~300 A; no extrapolation
+                duty.append(sc.margin_for(theta, name, float(ip), coolant_C=tc))
     (WEB / "duty_cycles.json").write_text(json.dumps({
         "limits": {"winding_C": sc.WINDING_LIMIT_C, "magnet_C": sc.MAGNET_LIMIT_C,
-                   "coolant_C": sc.COOLANT_C}, "labels": sc.DUTY_CYCLES, "runs": duty}))
+                   "coolant_grid_C": list(sc.COOLANT_GRID_C)}, "labels": sc.DUTY_CYCLES, "runs": duty}))
     safe = {}
     for name in sc.DUTY_CYCLES:
-        ok = [d["i_peak_A"] for d in duty if d["duty_cycle"] == name
-              and d["winding_margin_K"] > 0 and d["magnet_margin_K"] > 0]
-        safe[name] = max(ok) if ok else None
+        for tc in sc.COOLANT_GRID_C:
+            ok = [d["i_peak_A"] for d in duty if d["duty_cycle"] == name and d["coolant_C"] == tc
+                  and d["winding_margin_K"] > 0 and d["magnet_margin_K"] > 0]
+            safe[f"{name}@{tc:g}C"] = max(ok) if ok else None
     summary["duty_cycle_max_safe_peak_A"] = safe
 
     log("end-of-line study (synthetic units)")
