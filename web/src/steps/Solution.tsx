@@ -24,7 +24,7 @@ export function Solution({ d }: { d: AllData }) {
 
   return (
     <>
-      <p className="lede">Three decisions, each backed by the steps above.</p>
+      <p className="lede">Three decisions, each backed by the steps above. Measured on public bench data; test lengths come from simulated units.</p>
       <ol className="figure recipe">
         {decisions.map((r, i) => (
           <li key={r.h} className="recipe-row">
@@ -53,7 +53,7 @@ python -m pipeline.thermal_check screen eol_logs.csv --test-s 30`}</pre>
           {" "}<b>screen</b> returns a ranked queue with PASS or FAIL-investigate per unit.
         </p>
       </div>
-      <p className="verdict">This runs on public bench data. On a real line, the first week is one actuator type’s test history in, one-page recipe out.</p>
+      <p className="verdict">These numbers come from a public automotive motor, not a production actuator. The next step is validating them on one actuator type’s end-of-line history: a week in, a recipe for that line out.</p>
     </>
   );
 }

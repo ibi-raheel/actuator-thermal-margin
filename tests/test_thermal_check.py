@@ -13,8 +13,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def cycle_frame(i_s, n_krpm, coolant_C):
-    """A duty cycle written in the bench log's columns (current on the q axis)."""
-    return pd.DataFrame({"u_d": 0.0, "u_q": 0.0, "i_d": 0.0, "i_q": i_s, "motor_speed": n_krpm * 1000.0,
+    """A duty cycle in the documented input columns (current on the q axis, no voltages)."""
+    return pd.DataFrame({"i_d": 0.0, "i_q": i_s, "motor_speed": n_krpm * 1000.0,
                          "coolant": coolant_C, "ambient": sc.AMBIENT_C})
 
 

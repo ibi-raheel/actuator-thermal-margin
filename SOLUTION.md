@@ -2,7 +2,7 @@
 
 **Question.** How do you prove a sealed motor actuator will hold its duty cycle without overheating when nothing can measure the magnet, and how short can the end-of-line test be before bad units slip through?
 
-**Answer.** Physics plus two learned models, averaged, matched the best published temperature estimator on held-out motor runs (2.93 vs 2.87 K²). On simulated units, a 30-second test caught extra winding resistance (AUC 0.97), but a housing-interface void needed about 10 minutes. In 10 of the 21 duty cycles that overheated, the magnet crossed its limit first, so a winding-only check passed 9 of them.
+**Answer.** Physics plus two learned models, averaged, nearly matched the best published temperature estimator on held-out motor runs (2.93 vs 2.87 K²). On simulated units, a 30-second test caught extra winding resistance (AUC 0.97), but a housing-interface void needed about 10 minutes. In 10 of the 21 simulated duty-cycle runs that overheated, the magnet crossed its limit first, so a winding-only check passed 9 of them.
 
 Everything below comes from public test-bench data from a ~50 kW automotive PMSM, not a robot actuator. The end-of-line numbers come from **simulated units**. See [METHOD.md](METHOD.md) for the equations and checks.
 
@@ -63,7 +63,7 @@ python -m pipeline.thermal_check margin cycle.csv --max-safe
 python -m pipeline.thermal_check screen eol_logs.csv --test-s 30 [--good-col is_good]
 ```
 
-Inputs use the bench log's columns at 2 Hz (`--dt` changes the sample period):
+Inputs use the bench log's columns at 2 Hz (`--dt` changes the sample period). Voltages (`u_d, u_q`) are optional; the thermal network does not use them. Currents are read as the amplitude `sqrt(i_d² + i_q²)`, so the safe current is the peak of that amplitude in the file:
 - `margin`: `i_d, i_q, motor_speed, coolant, ambient`.
 - `screen`: `unit_id` plus the same columns plus `stator_winding`. An optional 1/0 column marks known-good units.
 

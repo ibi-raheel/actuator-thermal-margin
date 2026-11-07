@@ -111,9 +111,9 @@ function Answer({ d, onRecipe }: { d: AllData; onRecipe: () => void }) {
     <div className="answer">
       <p className="bezel-k">Answer <span>({fmt(d.summary.dataset.hours, 0)} h of real motor test-bench data)</span></p>
       <ul className="answer-list">
-        <li>Physics plus learned models infer magnet temperature as well as the best published estimator: <b>{fmt(s.blendMse, 2)}</b> vs <b>{fmt(s.pubMse, 2)} K²</b> on held-out runs.</li>
+        <li>Physics plus learned models infer magnet and stator temperatures about as well as the best published estimator: <b>{fmt(s.blendMse, 2)}</b> vs <b>{fmt(s.pubMse, 2)} K²</b> on held-out runs.</li>
         <li>A 30-second test catches extra winding resistance (AUC <b>{fmt(s.aucR30, 2)}</b>). A housing void needs about <b>10</b> minutes. (Simulated units.)</li>
-        <li>In <b>{s.magnetFirst} of {s.crossed}</b> overheating duty cycles the magnet hits its limit first, so a winding-only check passes <b>{s.windingOnlyPasses}</b> of them.</li>
+        <li>In <b>{s.magnetFirst} of {s.crossed}</b> simulated duty-cycle runs that overheated, the magnet hit its limit first, so a winding-only check passes <b>{s.windingOnlyPasses}</b> of them.</li>
       </ul>
       <a className="recipe-btn" href="#solution" onClick={(e) => { e.preventDefault(); onRecipe(); }}>
         Here’s the test recipe <span aria-hidden="true">→</span>

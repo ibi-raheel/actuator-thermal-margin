@@ -39,6 +39,11 @@ def load_theta(path: Path = PARAMS) -> np.ndarray:
 
 
 def _inputs(df: pd.DataFrame):
+    # The thermal network uses current, speed and temperatures only; voltages are optional in the input.
+    df = df.copy()
+    for col in ("u_d", "u_q"):
+        if col not in df.columns:
+            df[col] = 0.0
     df = add_derived(df)
     return (df["i_s"].to_numpy(float), (df["motor_speed"] / 1000.0).to_numpy(float),
             df["coolant"].to_numpy(float), df["ambient"].to_numpy(float))

@@ -3,9 +3,9 @@
 **Research question.** How do you prove a sealed motor actuator will hold its duty cycle without overheating when nothing can measure the magnet, and how short can the end-of-line test be before bad units slip through?
 
 **Measured answer** (public test-bench data from a ~50 kW automotive PMSM, not a robot actuator):
-- **Virtual sensor.** Physics plus two learned models, averaged, matched the best published temperature estimator on held-out motor runs: 2.93 vs 2.87 K².
+- **Virtual sensor.** Physics plus two learned models, averaged, nearly matched the best published temperature estimator on held-out motor runs: 2.93 vs 2.87 K².
 - **Test length (simulated units).** A 30-second test caught extra winding resistance (AUC 0.97), but a housing-interface void needed about 10 minutes (AUC 0.50 at 30 s, 0.95 at 600 s).
-- **Derating.** In 10 of the 21 duty cycles that overheated, the magnet crossed its limit first, so a winding-only check passed 9 of them.
+- **Derating.** In 10 of the 21 simulated duty-cycle runs that overheated, the magnet crossed its limit first, so a winding-only check passed 9 of them.
 
 **The solution:** a one-page thermal test recipe and a small tool (`python -m pipeline.thermal_check margin|screen`). See **[SOLUTION.md](SOLUTION.md)**.
 
@@ -32,7 +32,7 @@ Inside a sealed actuator, the magnet and winding temperatures cannot be measured
 | Published thermal neural network (reference) | 2.87 | 6.02 |
 
 - Each single model here is worse than its published counterpart.
-- Physics and learned errors are largely uncorrelated, so a plain average matches the best published MSE. Its worst-case error is still 2.5× higher.
+- Physics and learned errors are largely uncorrelated, so a plain average nearly matches the best published MSE (2.93 vs 2.87 K²). Its worst-case error is still 2.5× higher.
 - At 90 °C coolant, the walking-gait cycle stays within limits only up to 100 A peak, against 300 A at 40 °C. The magnet often crosses its limit before the winding does: in 10 of the 21 runs that crossed a limit, between about 10 and 53 minutes into the cycle.
 - On simulated units, a winding resistance defect of +8 % shows up in a 30 s test (AUC 0.97). A void in the stator-to-housing interface needs about 10 minutes (AUC 0.95 at 600 s, 0.50 at 30 s).
 
