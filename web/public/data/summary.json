@@ -1,0 +1,326 @@
+{
+ "dataset": {
+  "rows": 1330816,
+  "profiles": 69,
+  "hours": 184.8,
+  "train_profiles": 64,
+  "val_profiles": [
+   4,
+   58
+  ],
+  "test_profiles": [
+   60,
+   62,
+   74
+  ]
+ },
+ "models": [
+  {
+   "model": "LPTN, 4-node (this repo)",
+   "mse_K2": 12.94,
+   "max_K": 13.1,
+   "per_target": {
+    "pm": {
+     "mse_K2": 24.23,
+     "max_K": 12.15
+    },
+    "stator_winding": {
+     "mse_K2": 8.9,
+     "max_K": 13.1
+    },
+    "stator_tooth": {
+     "mse_K2": 11.39,
+     "max_K": 10.83
+    },
+    "stator_yoke": {
+     "mse_K2": 7.23,
+     "max_K": 7.73
+    }
+   }
+  },
+  {
+   "model": "Ridge on EWMA features (this repo)",
+   "mse_K2": 7.63,
+   "max_K": 23.1,
+   "per_target": {
+    "pm": {
+     "mse_K2": 10.83,
+     "max_K": 23.1
+    },
+    "stator_winding": {
+     "mse_K2": 10.98,
+     "max_K": 22.2
+    },
+    "stator_tooth": {
+     "mse_K2": 5.52,
+     "max_K": 16.95
+    },
+    "stator_yoke": {
+     "mse_K2": 3.18,
+     "max_K": 11.94
+    }
+   }
+  },
+  {
+   "model": "Gradient-boosted trees on EWMA features (this repo)",
+   "mse_K2": 7.9,
+   "max_K": 23.66,
+   "per_target": {
+    "pm": {
+     "mse_K2": 10.55,
+     "max_K": 23.66
+    },
+    "stator_winding": {
+     "mse_K2": 10.77,
+     "max_K": 20.98
+    },
+    "stator_tooth": {
+     "mse_K2": 6.11,
+     "max_K": 10.65
+    },
+    "stator_yoke": {
+     "mse_K2": 4.19,
+     "max_K": 18.55
+    }
+   }
+  },
+  {
+   "model": "Average of the three (this repo)",
+   "mse_K2": 2.93,
+   "max_K": 15.11,
+   "per_target": {
+    "pm": {
+     "mse_K2": 3.39,
+     "max_K": 15.11
+    },
+    "stator_winding": {
+     "mse_K2": 3.76,
+     "max_K": 9.29
+    },
+    "stator_tooth": {
+     "mse_K2": 2.86,
+     "max_K": 7.34
+    },
+    "stator_yoke": {
+     "mse_K2": 1.73,
+     "max_K": 10.14
+    }
+   }
+  }
+ ],
+ "benchmark_published": [
+  {
+   "model": "MLP (published)",
+   "mse_K2": 5.58,
+   "max_K": 14.29
+  },
+  {
+   "model": "OLS on EWMA features (published)",
+   "mse_K2": 4.47,
+   "max_K": 9.85
+  },
+  {
+   "model": "1D-CNN (published)",
+   "mse_K2": 4.43,
+   "max_K": 15.54
+  },
+  {
+   "model": "LPTN, expert-designed (published)",
+   "mse_K2": 3.64,
+   "max_K": 7.37
+  },
+  {
+   "model": "Thermal neural network (published)",
+   "mse_K2": 2.87,
+   "max_K": 6.02
+  }
+ ],
+ "ridge_alpha": 1,
+ "ridge_val_mse": {
+  "1": 36.22253747070538,
+  "10": 36.62462900526913,
+  "100": 36.59236246704345,
+  "1000": 37.06327622188678,
+  "10000.0": 37.41761433968162,
+  "100000.0": 37.43545768007717
+ },
+ "lptn_fit": {
+  "train_mse_K2": 23.71,
+  "nfev": 24,
+  "resolution_s": 10,
+  "params": {
+   "C_pm": 27665.85784133961,
+   "C_sw": 3125.1780409224784,
+   "C_st": 2737.9986737837653,
+   "C_sy": 6688.627684313271,
+   "G_sy_c": 74.14780057947684,
+   "G_st_sy": 100.82227150785211,
+   "G_sw_st": 60.61452796496678,
+   "G_sw_c": 0.012393760883331805,
+   "G_pm_st0": 6.742425943139909,
+   "G_pm_st1": 1.7247047640196866,
+   "G_pm_c": 8.598002668419797,
+   "R0": 0.015,
+   "k_st1": 0.02478752177219479,
+   "k_st2": 20.024361868843517,
+   "k_sy1": 0.0247875217666636,
+   "k_sy2": 0.012393760883331805,
+   "k_pm1": 2.752268254745184,
+   "k_pm2": 0.006209051515083129,
+   "k_st3": 0.00460549160427864,
+   "G_pm_c1": 1.196323666453817
+  }
+ },
+ "validation": {
+  "energy_balance": {
+   "loss_J": 29688221.790036842,
+   "stored_J": 2917819.238133988,
+   "to_coolant_J": 26770402.551903788,
+   "rel_residual": 3.149558338410608e-14
+  },
+  "plateau_hand_calc": {
+   "profile": 2,
+   "window_s": [
+    2460.0,
+    3660.0
+   ],
+   "i_s_A": 271.8,
+   "speed_rpm": 100.0,
+   "coolant_C": 18.78,
+   "R_ohm": 0.0199,
+   "P_cu_W": 2206.1,
+   "P_tooth_W": 34.2,
+   "P_yoke_W": 0.0,
+   "R_series_K_per_W": 0.0399,
+   "measured_rise_K": 84.41,
+   "hand_calc_rise_K": 88.83,
+   "network_steady_state_rise_K": 85.04,
+   "hand_vs_measured_K": 4.42,
+   "in_test_set": false
+  }
+ },
+ "duty_cycle_max_safe_peak_A": {
+  "lift_and_hold@25C": 300.0,
+  "lift_and_hold@40C": 300.0,
+  "lift_and_hold@65C": 300.0,
+  "lift_and_hold@90C": 200.0,
+  "walking_gait@25C": 300.0,
+  "walking_gait@40C": 300.0,
+  "walking_gait@65C": 225.0,
+  "walking_gait@90C": 100.0,
+  "continuous_carry@25C": 300.0,
+  "continuous_carry@40C": 300.0,
+  "continuous_carry@65C": 275.0,
+  "continuous_carry@90C": 175.0
+ },
+ "eol": {
+  "10": {
+   "winding_resistance_+8pct": {
+    "auc": 0.9505,
+    "tpr_at_1pct_fpr": 0.485,
+    "residual_mean_K": 0.175
+   },
+   "yoke_interface_-30pct": {
+    "auc": 0.5035,
+    "tpr_at_1pct_fpr": 0.01,
+    "residual_mean_K": 0.001
+   },
+   "slot_potting_-30pct": {
+    "auc": 0.6525,
+    "tpr_at_1pct_fpr": 0.055,
+    "residual_mean_K": 0.042
+   }
+  },
+  "30": {
+   "winding_resistance_+8pct": {
+    "auc": 0.9714,
+    "tpr_at_1pct_fpr": 0.72,
+    "residual_mean_K": 0.549
+   },
+   "yoke_interface_-30pct": {
+    "auc": 0.5032,
+    "tpr_at_1pct_fpr": 0.035,
+    "residual_mean_K": 0.005
+   },
+   "slot_potting_-30pct": {
+    "auc": 0.8946,
+    "tpr_at_1pct_fpr": 0.37,
+    "residual_mean_K": 0.369
+   }
+  },
+  "60": {
+   "winding_resistance_+8pct": {
+    "auc": 0.9802,
+    "tpr_at_1pct_fpr": 0.77,
+    "residual_mean_K": 0.994
+   },
+   "yoke_interface_-30pct": {
+    "auc": 0.5067,
+    "tpr_at_1pct_fpr": 0.025,
+    "residual_mean_K": 0.016
+   },
+   "slot_potting_-30pct": {
+    "auc": 0.9843,
+    "tpr_at_1pct_fpr": 0.815,
+    "residual_mean_K": 1.074
+   }
+  },
+  "120": {
+   "winding_resistance_+8pct": {
+    "auc": 0.9848,
+    "tpr_at_1pct_fpr": 0.765,
+    "residual_mean_K": 1.637
+   },
+   "yoke_interface_-30pct": {
+    "auc": 0.5274,
+    "tpr_at_1pct_fpr": 0.025,
+    "residual_mean_K": 0.079
+   },
+   "slot_potting_-30pct": {
+    "auc": 0.9987,
+    "tpr_at_1pct_fpr": 0.98,
+    "residual_mean_K": 2.448
+   }
+  },
+  "300": {
+   "winding_resistance_+8pct": {
+    "auc": 0.9838,
+    "tpr_at_1pct_fpr": 0.72,
+    "residual_mean_K": 2.73
+   },
+   "yoke_interface_-30pct": {
+    "auc": 0.7506,
+    "tpr_at_1pct_fpr": 0.1,
+    "residual_mean_K": 0.913
+   },
+   "slot_potting_-30pct": {
+    "auc": 0.9999,
+    "tpr_at_1pct_fpr": 1.0,
+    "residual_mean_K": 5.232
+   }
+  },
+  "600": {
+   "winding_resistance_+8pct": {
+    "auc": 0.9749,
+    "tpr_at_1pct_fpr": 0.66,
+    "residual_mean_K": 3.449
+   },
+   "yoke_interface_-30pct": {
+    "auc": 0.9498,
+    "tpr_at_1pct_fpr": 0.475,
+    "residual_mean_K": 2.936
+   },
+   "slot_potting_-30pct": {
+    "auc": 0.9999,
+    "tpr_at_1pct_fpr": 1.0,
+    "residual_mean_K": 7.41
+   }
+  }
+ },
+ "ewma_spans": [
+  1320,
+  3360,
+  6360,
+  9480
+ ]
+}

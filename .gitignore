@@ -3,6 +3,6 @@ web/dist/
 __pycache__/
 .pytest_cache/
 *.pyc
-data/
+/data/
 results/lptn_warm.npy
 .vercel
