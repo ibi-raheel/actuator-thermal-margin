@@ -10,6 +10,8 @@ import { Blend } from "./steps/Blend";
 import { Margin } from "./steps/Margin";
 import { EndOfLine } from "./steps/EndOfLine";
 import { HowWeKnow } from "./steps/HowWeKnow";
+import { Solution } from "./steps/Solution";
+import { storyNumbers } from "./ui/story";
 
 type StepDef = { id: string; title: string; render: (d: AllData) => ReactNode };
 
@@ -22,6 +24,7 @@ const STEPS: StepDef[] = [
   { id: "margin", title: "Safe current for a walking gait", render: (d) => <Margin d={d} /> },
   { id: "eol", title: "An end-of-line screen", render: (d) => <EndOfLine d={d} /> },
   { id: "proof", title: "How we know", render: (d) => <HowWeKnow d={d} /> },
+  { id: "solution", title: "The solution: a thermal test recipe", render: (d) => <Solution d={d} /> },
 ];
 
 export function App() {
@@ -50,8 +53,10 @@ export function App() {
     <>
       <header className="bezel">
         <div className="bezel-inner">
-          <h1>Actuator Thermal Margin</h1>
-          <p className="bezel-sub">A virtual temperature sensor for permanent-magnet actuators, built on real motor test-bench data.</p>
+          <p className="bezel-eyebrow">Actuator Thermal Margin</p>
+          <p className="bezel-k">Question</p>
+          <h1>Can a sealed actuator prove it won’t overheat when nothing can measure its magnet?</h1>
+          {data && <Answer d={data} onRecipe={() => go(STEPS.length - 1)} />}
           {data && (
             <dl className="bezel-log" aria-label="Bench log">
               <div><dt>Samples</dt><dd>{data.summary.dataset.rows.toLocaleString("en-US")}</dd></div>
@@ -97,6 +102,24 @@ export function App() {
         </main>
       </div>
     </>
+  );
+}
+
+function Answer({ d, onRecipe }: { d: AllData; onRecipe: () => void }) {
+  const s = storyNumbers(d);
+  return (
+    <div className="answer">
+      <p className="bezel-k">Answer <span>({fmt(d.summary.dataset.hours, 0)} h of real motor test-bench data)</span></p>
+      <ul className="answer-list">
+        <li>Physics plus learned models infer magnet temperature as well as the best published estimator: <b>{fmt(s.blendMse, 2)}</b> vs <b>{fmt(s.pubMse, 2)} K²</b> on held-out runs.</li>
+        <li>A 30-second test catches extra winding resistance (AUC <b>{fmt(s.aucR30, 2)}</b>). A housing void needs about <b>10</b> minutes. (Simulated units.)</li>
+        <li>In <b>{s.magnetFirst} of {s.crossed}</b> overheating duty cycles the magnet hits its limit first, so a winding-only check passes <b>{s.windingOnlyPasses}</b> of them.</li>
+      </ul>
+      <a className="recipe-btn" href="#solution" onClick={(e) => { e.preventDefault(); onRecipe(); }}>
+        Here’s the test recipe <span aria-hidden="true">→</span>
+      </a>
+      <p className="bezel-fine">Public data, ~50 kW automotive PMSM, not a robot actuator. Method and checks below.</p>
+    </div>
   );
 }
 

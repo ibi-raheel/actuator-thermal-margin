@@ -1,5 +1,14 @@
 # Actuator Thermal Margin
 
+**Research question.** How do you prove a sealed motor actuator will hold its duty cycle without overheating when nothing can measure the magnet, and how short can the end-of-line test be before bad units slip through?
+
+**Measured answer** (public test-bench data from a ~50 kW automotive PMSM, not a robot actuator):
+- **Virtual sensor.** Physics plus two learned models, averaged, matched the best published temperature estimator on held-out motor runs: 2.93 vs 2.87 K².
+- **Test length (simulated units).** A 30-second test caught extra winding resistance (AUC 0.97), but a housing-interface void needed about 10 minutes (AUC 0.50 at 30 s, 0.95 at 600 s).
+- **Derating.** In 10 of the 21 duty cycles that overheated, the magnet crossed its limit first, so a winding-only check passed 9 of them.
+
+**The solution:** a one-page thermal test recipe and a small tool (`python -m pipeline.thermal_check margin|screen`). See **[SOLUTION.md](SOLUTION.md)**.
+
 A virtual temperature sensor for permanent-magnet motors. It estimates magnet and winding temperature from current, voltage and speed, checks itself against a physics thermal network, and turns a duty cycle into the number of kelvin of margin an actuator has left.
 
 **Live demo:** to be added after deployment
@@ -24,7 +33,7 @@ Inside a sealed actuator, the magnet and winding temperatures cannot be measured
 
 - Each single model here is worse than its published counterpart.
 - Physics and learned errors are largely uncorrelated, so a plain average matches the best published MSE. Its worst-case error is still 2.5× higher.
-- At 90 °C coolant, the walking-gait cycle stays within limits only up to 100 A peak, against 300 A at 40 °C. The magnet often crosses its limit before the winding does, 12 to 29 minutes into the cycle.
+- At 90 °C coolant, the walking-gait cycle stays within limits only up to 100 A peak, against 300 A at 40 °C. The magnet often crosses its limit before the winding does: in 10 of the 21 runs that crossed a limit, between about 10 and 53 minutes into the cycle.
 - On simulated units, a winding resistance defect of +8 % shows up in a 30 s test (AUC 0.97). A void in the stator-to-housing interface needs about 10 minutes (AUC 0.95 at 600 s, 0.50 at 30 s).
 
 Validation:
@@ -39,6 +48,7 @@ See [METHOD.md](METHOD.md) for the equations, assumptions, validation and limita
 - `pipeline/lptn.py` and `pipeline/fit_lptn.py`: the 4-node thermal network with temperature-corrected copper loss and speed-dependent iron loss. It is integrated with backward Euler (numba) and fitted by trust-region least squares.
 - `pipeline/learned.py`: ridge and LightGBM estimators.
 - `pipeline/scenarios.py`: duty-cycle margins and the simulated end-of-line study.
+- `pipeline/thermal_check.py`: command-line wrapper for duty-cycle margin and the end-of-line residual screen (see [SOLUTION.md](SOLUTION.md)).
 - `pipeline/run_all.py`: runs everything and writes static JSON to `web/public/data/`. The page needs no backend and no API keys.
 
 ## Run locally
@@ -46,7 +56,7 @@ See [METHOD.md](METHOD.md) for the equations, assumptions, validation and limita
 # 1. data: download measures_v2.csv from the Kaggle dataset below into a folder of its own
 python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 PYTHON=.venv/bin/python ./run_pipeline.sh /path/to/measures_v2.csv   # ~4 min on 2 cores
-.venv/bin/python -m pytest -q tests                                    # 12 tests
+.venv/bin/python -m pytest -q tests                                    # 14 tests
 
 # 2. page
 cd web && npm install && npm run dev

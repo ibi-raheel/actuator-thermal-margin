@@ -2,6 +2,17 @@
 
 This file covers the equations, assumptions, validation and limitations behind every number in the demo. The pipeline lives in `pipeline/`. Running `./run_pipeline.sh <measures_v2.csv>` regenerates `results/summary.json` and the static JSON in `web/public/data/`.
 
+## Research question
+
+How do you prove a sealed motor actuator will hold its duty cycle without overheating when nothing can measure the magnet, and how short can the end-of-line test be before bad units slip through?
+
+Three sub-questions follow, each answered below:
+- How well can magnet temperature be inferred from current, voltage and speed? (sections 2 to 4)
+- Which limit binds on a duty cycle, the winding or the magnet? (section 6)
+- How long must an end-of-line test run to catch each defect class? (section 7, simulated units)
+
+The decision rules drawn from these results, and the tool that applies them, are in [SOLUTION.md](SOLUTION.md).
+
 ## 1. Data
 
 **Electric Motor Temperature** dataset, LEA department, Paderborn University (W. Kirchgässner, O. Wallscheid, J. Böcker), published on Kaggle as `wkirgsn/electric-motor-temperature`, file `measures_v2.csv`, licence **CC BY-SA 4.0**. The derived data in `web/public/data/` is shared under the same licence.
