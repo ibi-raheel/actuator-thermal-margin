@@ -49,7 +49,7 @@ export function Physics({ d }: { d: AllData }) {
     { id: "R4", el: "Magnet → tooth (air gap)", v: `${fmt(P.G_pm_st0, 2)} + ${fmt(P.G_pm_st1, 2)}·n W/K` },
     { id: "R5", el: "Magnet → coolant (shaft, bearings)", v: `${fmt(P.G_pm_c, 2)} + ${fmt(P.G_pm_c1, 2)}·n W/K` },
     { id: "R6", el: "Winding → coolant (end winding)", v: `${fmt(P.G_sw_c, 3)} W/K, fitted to ≈ 0` },
-    { id: "C1", el: "Magnet heat capacity", v: `${kj(P.C_pm)} kJ/K` },
+    { id: "C1", el: "Magnet", v: `${kj(P.C_pm)} kJ/K` },
     { id: "C2", el: "Winding", v: `${kj(P.C_sw)} kJ/K` },
     { id: "C3", el: "Stator tooth", v: `${kj(P.C_st)} kJ/K` },
     { id: "C4", el: "Stator yoke", v: `${kj(P.C_sy)} kJ/K` },
@@ -62,6 +62,7 @@ export function Physics({ d }: { d: AllData }) {
         On the held-out runs it misses by {fmt(lptn.mse_K2, 2)} K² on average and {fmt(lptn.max_K)} K at worst.
       </p>
       <div className="figure circuit">
+        <div className="circuit-scroll" tabIndex={0} aria-label="Thermal network schematic, scrolls sideways on small screens">
         <svg viewBox="0 0 580 330" className="circuit-svg" role="img"
           aria-label="Thermal network schematic: magnet, winding, stator tooth and stator yoke nodes joined by thermal resistances R1 to R6, each with a heat capacity to ground, and a coolant rail.">
           <defs>
@@ -71,7 +72,7 @@ export function Physics({ d }: { d: AllData }) {
           </defs>
           {/* coolant rail */}
           <line x1={30} y1={300} x2={560} y2={300} className="rail-line" />
-          <text x={30} y={322} className="sch-label">Coolant T<tspan baselineShift="sub" fontSize="11">c</tspan> (measured boundary)</text>
+          <text x={30} y={322} className="sch-label">Coolant T<tspan dy={4} fontSize="10">c</tspan><tspan dy={-4} dx={5}>(measured boundary)</tspan></text>
 
           <Res x1={100} y1={180} x2={300} y2={180} />
           <Res x1={300} y1={180} x2={470} y2={180} />
@@ -103,8 +104,12 @@ export function Physics({ d }: { d: AllData }) {
             <text key={t as string} x={x as number} y={y as number} className="designator" textAnchor={t === "R4" || t === "R2" ? "middle" : t === "R3" ? "end" : "start"}>{t as string}</text>
           ))}
         </svg>
-        <div className="parts-wrap">
-          {[["Thermal conductances (fitted)", parts.slice(0, 6)], ["Heat capacities (fitted)", parts.slice(6)]].map(([cap, rows]) => (
+        </div>
+        <p className="circuit-hint" aria-hidden="true">Swipe to pan the schematic</p>
+      </div>
+      <Details summary="Fitted values and equations">
+        <div className="parts-wrap in-details">
+          {[["Thermal conductances G = 1/R (fitted)", parts.slice(0, 6)], ["Heat capacities (fitted)", parts.slice(6)]].map(([cap, rows]) => (
             <table className="parts" key={cap as string}>
               <caption>{cap as string}</caption>
               <tbody>
@@ -116,8 +121,7 @@ export function Physics({ d }: { d: AllData }) {
           ))}
           <p className="parts-note">n is speed in krpm. A conductance G is the inverse of a thermal resistance.</p>
         </div>
-      </div>
-      <Details>
+
         <p>Each node obeys an energy balance, with n the speed in krpm:</p>
         <pre className="eq">{`C_i dT_i/dt = P_i − Σ_j G_ij (T_i − T_j) − G_i,c (T_i − T_c)
 

@@ -36,7 +36,7 @@ export function Learned({ d }: { d: AllData }) {
   const errs = active.map((m) => series[m].map((v, i) => v - meas[i]));
   const eMax = Math.max(5, ...errs.flat().map(Math.abs));
   const ey = linear([-eMax, eMax], [H + gap + EH, H + gap]);
-  const totalH = H + gap + EH + 22;
+  const totalH = H + gap + EH + 36;
 
   const pick = (e: PointerEvent<SVGRectElement>) => {
     const r = e.currentTarget.getBoundingClientRect();
@@ -109,7 +109,7 @@ export function Learned({ d }: { d: AllData }) {
               {ticks(0, tmin[n - 1], narrow ? 4 : 8).map((t) => (
                 <g key={t} transform={`translate(${x(t)} 0)`}><line y2={4} /><text y={17} textAnchor="middle">{t}</text></g>
               ))}
-              <text x={ml - 6} y={17} textAnchor="end" className="unit">min</text>
+              <text x={w - mr} y={31} textAnchor="end" className="unit">time, min</text>
             </g>
 
             <g className="cursor" transform={`translate(${x(tmin[k])} 0)`}>

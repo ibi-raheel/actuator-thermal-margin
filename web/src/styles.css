@@ -436,3 +436,16 @@ input[type="range"]::-moz-range-thumb { width: 10px; height: 20px; border-radius
 
 .bezel-log dt, .bezel-log dd { white-space: nowrap; }
 @media (max-width: 640px) { .bezel-log div { flex-direction: column; gap: 2px; } }
+
+/* ---------- review pass ---------- */
+/* step 3: the schematic is the one visual; values live in the disclosure */
+.circuit { gap: 8px; }
+.circuit-scroll { overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: thin; }
+.circuit-scroll:focus-visible { outline-offset: 4px; }
+.circuit-hint { display: none; margin: 0; font: 500 0.6875rem var(--f-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
+@media (max-width: 600px) {
+  .circuit-svg { min-width: 500px; }
+  .circuit-hint { display: block; }
+}
+.parts-wrap.in-details { grid-template-columns: minmax(0, 1fr) !important; max-width: 640px; margin-bottom: 18px; }
+.parts-wrap.in-details .parts { background: transparent; }

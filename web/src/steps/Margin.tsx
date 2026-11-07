@@ -40,7 +40,7 @@ export function Margin({ d }: { d: AllData }) {
   return (
     <>
       <p className="lede">
-        Run the fitted network through an hour of a walking gait. At {grid[1]} °C coolant the full {fmt(safeAt(grid[1]), 0)} A stays inside both limits; at {grid[grid.length - 1]} °C only {fmt(safeAt(grid[grid.length - 1]), 0)} A does.
+        Run the fitted network through an hour of a walking gait. At {grid[1]}{"\u00a0"}°C coolant the full {fmt(safeAt(grid[1]), 0)}{"\u00a0"}A stays inside both limits; at {grid[grid.length - 1]}{"\u00a0"}°C only {fmt(safeAt(grid[grid.length - 1]), 0)}{"\u00a0"}A does.
       </p>
       <div className="figure margin">
         <div className="margin-top">
@@ -75,8 +75,6 @@ export function Margin({ d }: { d: AllData }) {
 
             <line x1={ml} x2={w - mr} y1={y(WL)} y2={y(WL)} className="limit limit-w" />
             <line x1={ml} x2={w - mr} y1={y(ML)} y2={y(ML)} className="limit limit-m" />
-            <text x={ml + 6} y={y(WL) - 6} className="limit-label">Winding limit {WL} °C</text>
-            <text x={ml + 6} y={y(ML) - 6} className="limit-label">Magnet limit {ML} °C</text>
 
             <path d={line("peak_winding_C")} className="m-line" style={{ stroke: "var(--wind)" }} />
             <path d={line("peak_magnet_C")} className="m-line" style={{ stroke: "var(--mag)" }} />
@@ -97,6 +95,10 @@ export function Margin({ d }: { d: AllData }) {
               <line y1={8} y2={H} />
               <text y={H - 8} x={-6} textAnchor="end">{fmt(safe, 0)} A</text>
             </g>
+
+            {/* limit labels sit above the data so the halo keeps them legible */}
+            <text x={ml + 6} y={y(WL) - 6} className="limit-label">Winding limit {WL} °C</text>
+            <text x={ml + 6} y={y(ML) - 6} className="limit-label">Magnet limit {ML} °C</text>
 
             <g className="axis" transform={`translate(0 ${H})`}>
               {runs.filter((_, i) => !narrow || i % 2 === 0).map((r) => (
