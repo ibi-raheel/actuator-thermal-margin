@@ -134,6 +134,7 @@ function Footer() {
       </p>
       <p>Duty cycles are constructed and the end-of-line units are simulated on top of the fitted model; both are labelled where they appear.</p>
       <p className="foot-more">More work at <a href="https://ibiraheel.com">ibiraheel.com</a></p>
+      <p>Code, method and tests: <a href="https://github.com/ibi-raheel/actuator-thermal-margin" rel="noopener">github.com/ibi-raheel/actuator-thermal-margin</a></p>
     </footer>
   );
 }

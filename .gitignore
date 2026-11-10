@@ -6,3 +6,6 @@ __pycache__/
 /data/
 results/lptn_warm.npy
 .vercel
+.venv/
+.DS_Store
+*.log
